@@ -50,12 +50,22 @@ splited_56_28 permutation_c(bit_64 input) {
 
 	output.right = out_temp >> 36;
 
-	printf("left: %x \n right: %x", output.left, output.right);
 	return output;
 }
 
+void left_shift_n(splited_56_28* input, int n) {
+	input->left = (input->left << n) | (input->left >> 28-1);
+	input->right = (input->right << n) | (input->right >> 28-1);
+
+	printf("left: %x \n right: %x", input->left, input->right);
+}
+
+
 void main(void) {
 	bit_64 temp = 0x4E36DD8D568284C9;
-	permutation_c(temp);
+	splited_56_28 temp_t;
+
+	temp_t = permutation_c(temp);
+	left_shift_n(&temp_t, 1);
 
 }
