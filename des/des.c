@@ -16,46 +16,13 @@ typedef struct _bit_56 {
 	unsigned long long : 8,
 				  bit56 : 56;
 } bit_56;
-
 typedef struct _bit_48 {
 	unsigned long long : 16,
 				  bit48 : 48;
 } bit_48;
 
-typedef struct _sub_key {
+bit_48 subkey[16];
 
-	bit_48 sub_key1;
-	bit_48 sub_key2;
-	bit_48 sub_key3;
-	bit_48 sub_key4;
-	bit_48 sub_key5;
-	bit_48 sub_key6;
-	bit_48 sub_key7;
-	bit_48 sub_key8;
-	bit_48 sub_key9;
-	bit_48 sub_key10;
-	bit_48 sub_key11;
-	bit_48 sub_key12;
-	bit_48 sub_key13;
-	bit_48 sub_key14;
-	bit_48 sub_key15;
-	bit_48 sub_key16;
-
-} sub_key;
-
-sub_key subkey;
-typedef struct _sp_val {
-
-	char sp_1;
-	char sp_2;
-	char sp_3;
-	char sp_4;
-	char sp_5;
-	char sp_6;
-	char sp_7;
-	char sp_8;
-
-} sp_val;
 splited_56_28 permutation_c_1(bit_64 input) {
 	
 	splited_56_28 output;
@@ -101,8 +68,21 @@ void left_shift_n(splited_56_28* input, int n) {
 	input->right = (input->right << n) | (input->right >> 28-1);
 
 }
-bit_56 combine_left_with_right_28(splited_56_28 input) {
 
+bit_64 switch_64(splited_64_32 input) {
+	splited_64_32 out_tmp;
+
+	out_tmp.left = input.right;
+	out_tmp.right = input.left;
+
+	bit_64 output;
+	output = out_tmp.left;
+	output <<= 32;
+	output |= out_tmp.right;
+
+	return output; 
+}
+bit_56 combine_left_with_right_28(splited_56_28 input) {
 	bit_56 output;
 	output.bit56 = 0;
 
@@ -170,40 +150,7 @@ void keygen_round(splited_56_28 input){
 		pc_2_res.bit48 = 0;
 		pc_2_res = permutation_c_2(left_shift_res);
 
-		switch (i+1) {
-			case 1 : subkey.sub_key1.bit48 = pc_2_res.bit48;
-					 break;
-			case 2 : subkey.sub_key2.bit48 = pc_2_res.bit48;
-					 break;
-			case 3 : subkey.sub_key3.bit48 = pc_2_res.bit48;
-					 break;
-			case 4 : subkey.sub_key4.bit48 = pc_2_res.bit48;
-					 break;
-			case 5 : subkey.sub_key5.bit48 = pc_2_res.bit48;
-					 break;
-			case 6 : subkey.sub_key6.bit48 = pc_2_res.bit48;
-					 break;
-			case 7 : subkey.sub_key7.bit48 = pc_2_res.bit48;
-					 break;
-			case 8 : subkey.sub_key8.bit48 = pc_2_res.bit48;
-					 break;
-			case 9 : subkey.sub_key9.bit48 = pc_2_res.bit48;
-					 break;
-			case 10 : subkey.sub_key10.bit48 = pc_2_res.bit48;
-					 break;
-			case 11 : subkey.sub_key11.bit48 = pc_2_res.bit48;
-					 break;
-			case 12 : subkey.sub_key12.bit48 = pc_2_res.bit48;
-					 break;
-			case 13 : subkey.sub_key13.bit48 = pc_2_res.bit48;
-					 break;
-			case 14 : subkey.sub_key14.bit48 = pc_2_res.bit48;
-					 break;
-			case 15 : subkey.sub_key15.bit48 = pc_2_res.bit48;
-					 break;
-			case 16 : subkey.sub_key16.bit48 = pc_2_res.bit48;
-					 break;
-		}
+		subkey[i].bit48 = pc_2_res.bit48;
 	}
 }
 void subkey_generate(bit_64 input) {
@@ -233,86 +180,133 @@ bit_48 expantion_permutation(splited_64_32 input) {
 		temp.bit48 = temp.bit48 >> i;
 
 		output.bit48 |= temp.bit48;
-	return output;
 	}
+	return output;
 }
 
 bit_32 substitution(bit_48 input) {
 
-	bit_32 output = 0;
-	sp_val sp_value;
 
-//	char s1_table[4][16] = ;
-//	char s2_table[4][16] = ;
-//	char s3_table[4][16] = ;
-//	char s4_table[4][16] = ;
-//	char s5_table[4][16] = ;
-//	char s6_table[4][16] = ;
-//	char s7_table[4][16] = ;
+	char sbox[8][4][16]={{{14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7},
+		{0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8},
+		{4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0},
+		{15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 2, 14, 10, 0, 6, 13}},
+
+		{{15, 1, 8, 14, 6, 11, 3, 4, 9, 7, 2, 13, 12, 0, 5, 10},
+			{3, 13, 4, 7, 15, 2, 8, 14, 12, 0, 1, 10, 6, 9, 11, 5},
+			{0, 14, 7, 11, 10, 4, 13, 1, 5, 8, 12, 6, 9, 3, 2, 15},
+			{13, 8, 10, 1, 3, 15, 4, 2, 11, 6, 7, 12, 0, 5, 14, 9}},
+
+		{{10, 0, 9, 14, 6, 3, 15, 5, 1, 13, 12, 7, 11, 4, 2, 8},
+			{13, 7, 0, 9, 3, 4, 6, 10, 2, 8, 5, 14, 12, 11, 15, 1},
+			{13, 6, 4, 9, 8, 15, 3, 0, 11, 1, 2, 12, 5, 10, 14, 7},
+			{1, 10, 13, 0, 6, 9, 8, 7, 4, 15, 14, 3, 11, 5, 2, 12}},
+
+		{{7, 13, 14, 3, 0, 6, 9, 10, 1, 2, 8, 5, 11, 12, 4, 15},
+			{13, 8, 11, 5, 6, 15, 0, 3, 4, 7, 2, 12, 1, 10, 14, 9},
+			{10, 6, 9, 0, 12, 11, 7, 13, 15, 1, 3, 14, 5, 2, 8, 4},
+			{3, 15, 0, 6, 10, 1, 13, 8, 9, 4, 5, 11, 12, 7, 2, 14}},
+
+		{{2, 12, 4, 1, 7, 10, 11, 6, 8, 5, 3, 15, 13, 0, 14, 9},
+			{14, 11, 2, 12, 4, 7, 13, 1, 5, 0, 15, 10, 3, 9, 8, 6},
+			{4, 2, 1, 11, 10, 13, 7, 8, 15, 9, 12, 5, 6, 3, 0, 14},
+			{11, 8, 12, 7, 1, 14, 2, 13, 6, 15, 0, 9, 10, 4, 5, 3}},
+
+		{{4, 11, 2, 14, 15, 0, 8, 13, 3, 12, 9, 7, 5, 10, 6, 1},
+			{13, 0, 11, 7, 4, 9, 1, 10, 14, 3, 5, 12, 2, 15, 8, 6},
+			{1, 4, 11, 13, 12, 3, 7, 14, 10, 15, 6, 8, 0, 5, 9, 2},
+			{6, 11, 13, 8, 1, 4, 10, 7, 9, 5, 0, 15, 14, 2, 3, 12}},
+
+		{{12, 1, 10, 15, 9, 2, 6, 8, 0, 13, 3, 4, 14, 7, 5, 11},
+			{10, 15, 4, 2, 7, 12, 9, 5, 6, 1, 13, 14, 0, 11, 3, 8},
+			{9, 14, 15, 5, 2, 8, 12, 3, 7, 0, 4, 10, 1, 13, 11, 6},
+			{4, 3, 2, 12, 9, 5, 15, 10, 11, 14, 1, 7, 6, 0, 8, 13}},
+
+		{{13, 2, 8, 4, 6, 15, 11, 1, 10, 9, 3, 14, 5, 0, 12, 7},
+			{1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11, 0, 14, 9, 2},
+			{7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8},
+			{2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11}}};
+
 	char tmp = 0;
+	char sub_val[8];
+
 	for(int i = 0; i < 8; i++, tmp = 0) {
 
 		tmp = (input.bit48 & (0xFC0000000000 >> (6*i))) >> (48 - (6 * (i + 1)));
 
-		printf("%d: %x\n", i+1, tmp<<2);
-		switch (i+1) {
-			case 1 : sp_value.sp_1 = tmp;
-					 break;
-			case 2 : sp_value.sp_2 = tmp;
-					 break;
-			case 3 : sp_value.sp_3 = tmp;
-					 break;
-			case 4 : sp_value.sp_4 = tmp;
-					 break;
-			case 5 : sp_value.sp_5 = tmp;
-					 break;
-			case 6 : sp_value.sp_6 = tmp;
-					 break;
-			case 7 : sp_value.sp_7 = tmp;
-					 break;
-			case 8 : sp_value.sp_8 = tmp;
-					 break;
-		}
+		printf("%d: %x\n", i+1, tmp);
+		sub_val[i] = tmp;
 	}
-//	ATTACH_BIT_4(output.bit4, s0_table[left.row][left.col], s1_table[right.row][right.col]);
+	char row = 0;
+	char col = 0;
 
+	bit_32 output = 0;
+
+	for(int i = 0; i < 8; i++, row = 0, col = 0) {
+
+	row = ((sub_val[i] >> 4) & 2) | (sub_val[i]  & 1);
+	col = (sub_val[i] & 0x1E) >> 1;
+	sub_val[i] = sbox[i][row][col];
+	printf("%x\n", sub_val[i]);
+	}
+
+	for(int i = 0; i < 8; i++) {
+		output |= ((bit_32)sub_val[i] & 0xF) << (28 - (i * 4));
+	}
+	printf("%x\n", output);
 	return output; 
 }
-//bit_32 function_key(splited_8_4 input, bit_48 key) {
-//
-//	bit_48 res_ep;
-//	res_ep.bit48 = 0;
-//	bit_48 res_xor;
-//	res_xor.bit48 = 0;
-//
-//	res_ep = expantion_permutation(input);
-//
-//	res_xor.bit48 = (key.bit48 ^ res_ep.bit48);
-//
-//	bit_32 res_sub = 0;
-//	res_sub = substitution(res_xor);
-////
-//	bit_32 res_p = 0;
-////	res_p4 = permutation_4(res_sub);
-//	return res_p;
-////
-//}
 
-//bit8_t fk_key(splited_8_4 input, bit8_t key) {
-//
-//	bit4_t fk_res;
-//	fk_res.bit4 = 0;
-//	fk_res = function_key(input, key);
-//
-//	bit4_t temp;
-//	temp.bit4 = 0;
-//	temp.bit4 = (input.left ^ fk_res.bit4);
-//
-//	bit8_t temp2 = 0;
-//	ATTACH_BIT_8(temp2, temp.bit4, input.right);
-//
-//	return temp2;
-//}
+bit_32 permutation_4(bit_32 input) {
+
+	char p4_table[32] = {
+		16, 7, 20, 21, 29, 12, 28, 17,
+		1, 15, 23, 26,  5, 18, 31, 10,
+		2, 8, 24, 14, 32, 27, 3, 9,
+		19, 13, 30,  6, 22, 11, 4, 25
+	};
+
+	bit_32 output,temp;
+
+	output = 0;
+	temp = 0;
+	for(int i = 0; i < 32; i++) {
+
+		temp = input & (0x80000000 >> (p4_table[i] - 1)); 
+		temp = temp << (p4_table[i] - 1);
+		temp = temp >> i;
+
+		output |= temp;
+	}   
+
+	return output;
+}
+
+splited_64_32 festal(splited_64_32 input, bit_48 key) {//16회 반복
+
+	bit_48 res_ep;
+	res_ep.bit48 = 0;
+
+	res_ep = expantion_permutation(input);
+
+	bit_48 res_xor;
+	res_xor.bit48 = 0;
+
+	res_xor.bit48 = (key.bit48 ^ res_ep.bit48);
+
+	bit_32 res_sub = 0;
+	res_sub = substitution(res_xor);
+
+	bit_32 res_p4 = 0;
+	res_p4 = permutation_4(res_sub);
+
+	splited_64_32 output;
+	output.right = 0;
+	output.right = (input.left ^ res_p4);
+
+	output.left = input.right;
+	return output;
+}
 
 splited_64_32 initial_permutation(bit_64 input) {
 
@@ -338,6 +332,33 @@ splited_64_32 initial_permutation(bit_64 input) {
 	return output;
 }
 
+bit_64 initial_permutation_inverse(bit_64 input) {
+	char ipi_table[64] = {
+		40, 8, 48, 16, 56, 24, 64, 32,
+		39, 7, 47, 15, 55, 23, 63, 31,
+		38, 6, 46, 14, 54, 22, 62, 30,
+		37, 5, 45, 13, 53, 21, 61, 29,
+		36, 4, 44, 12, 52, 20, 60, 28,
+		35, 3, 43, 11, 51, 19, 59, 27,
+		34, 2, 42, 10, 50, 18, 58, 26,
+		33, 1, 41,  9, 49, 17, 57, 25
+	};
+	
+	bit_64 output = 0;
+	bit_64 temp = 0;
+
+	for(int i = 0; i < 64; i++) {
+
+		temp = input & (0x8000000000000000 >> (ipi_table[i] - 1)); 
+		temp = temp << (ipi_table[i] - 1);
+		temp = temp >> i;
+
+		output |= temp;
+	}   
+
+	return output;
+}
+
 bit_64 des_encrypt(bit_64 input) {
 
 	splited_64_32 ip_res;
@@ -345,33 +366,28 @@ bit_64 des_encrypt(bit_64 input) {
 	ip_res.right = 0;
 
 	ip_res = initial_permutation(input);
-//	bit8_t k1_tmp = 0;
-//
-//	k1_tmp = fk_key(ip_res, (bit8_t)subkey.key_1);
-//
-//	bit8_t k1_out_tmp = 0;
-//	k1_out_tmp = SWITCH(k1_tmp);
-//
-//	splited_8_4 k1_res;
-//	k1_res.left = 0;
-//	k1_res.right = 0;
-//
-//	k1_res.left = SPLIT_BIT_8_LEFT(k1_out_tmp);
-//	k1_res.right = SPLIT_BIT_8_RIGHT(k1_out_tmp);
-//
-//	bit8_t output = 0;
-//	output = fk_key(k1_res, (bit8_t)subkey.key_2);
-//	bit8_t output2 = initial_permutation_inverse(output);
-//	return output2;
+
+	splited_64_32 festal_res;
+	festal_res = ip_res;
+
+	for(int i = 0; i < 16; i++) {
+		festal_res = festal(festal_res, subkey[i]);
+	}
+
+	bit_64 sw_res;
+	sw_res = switch_64(festal_res);
+
+	bit_64 output = initial_permutation_inverse(sw_res);
+	return output;
 }
 
 void main(void) {
 //	bit_64 temp = 0x4E36DD8D568284C9;
 //
-//	bit_64 plain_t = (bit_64)"SOHEEMON";
+	bit_64 plain_t = (bit_64)"SOHEEMON";
 //	subkey_generate(temp);
-//	des_encrypt(plain_t);
-	bit_48 temp;
-	temp.bit48 = 0xFCFCFCFCFCFC;
-	substitution(temp);
+	des_encrypt(plain_t);
+//	bit_48 temp;
+//	temp.bit48 = 0xFFFFFFFFFFFF;
+//	substitution(temp);
 }
