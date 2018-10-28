@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef enum {
+	true = 0,
+	false = 1
+} bool;
+
 typedef struct _string {
 	char* string;
 	int strLength;
@@ -8,12 +13,37 @@ typedef struct _string {
 	void (*strInit) (const char*, struct _string*);
 	void (*strFree) (struct _string*);
 	void (*pri) (struct _string*);
+
+	bool (*startWith) (char, struct _string*);
+	bool (*endWith) (char, struct _string*);
+	bool (*equals) (struct _string*, struct _string*);
 }String;
 
 void _strFree (String* this) {
 	free(this->string);
 	free(this);
 }
+
+bool _startWith (char chr, String* this) {
+
+	if(chr == this->string[0]) {
+		return true;
+	}else {
+		return false;
+	}
+
+}
+
+bool _endWith (char chr, String* this) {
+
+	if(chr == this->string[this->strLength-1]) {
+		return true;
+	}else {
+		return false;
+	}
+
+}
+
 void _strInit (const char* string, String* this) {
 
 
@@ -53,6 +83,9 @@ String* insInit (String* this) {
 	this->pri = _pri;
 	this->strFree = _strFree;
 
+	this->startWith = _startWith;
+	this->endWith = _endWith;
+
 	return this;
 }
 
@@ -61,8 +94,10 @@ void main(void) {
 	String* test;
 	test = insInit(test);
 
-	test->strInit("aaaaaaaaaassssssssssddddddddddffffffffff", test);
+	test->strInit("aaaaaaaaaassssssssssddddddddddffffffffff!", test);
 	test->pri(test);
+	printf("%d\n", (int)test->startWith('a', test));
+	printf("%d\n", (int)test->endWith('!', test));
 	test->strFree(test);
 
 }
