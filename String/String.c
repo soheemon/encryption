@@ -6,15 +6,16 @@ typedef struct _string {
 	int strLength;
 
 	void (*strInit) (const char*, struct _string*);
-	void (*freeStr) (struct _string*);
+	void (*strFree) (struct _string*);
 	void (*pri) (struct _string*);
 }String;
 
-void _freeStr (String* this) {
+void _strFree (String* this) {
 	free(this->string);
 	free(this);
 }
 void _strInit (const char* string, String* this) {
+
 
 	char* tmpChar = (char*)string;
 	int _strLength = 0;
@@ -44,20 +45,24 @@ void _pri(String* this) {
 	printf("%s %d\n", this->string, this->strLength);
 }
 
-void insInit (String* this) {
+String* insInit (String* this) {
+
+	this = (String*) malloc(sizeof(String));
+
 	this->strInit = _strInit;
 	this->pri = _pri;
-	this->freeStr = _freeStr;
+	this->strFree = _strFree;
+
+	return this;
 }
 
 void main(void) {
-	String* test;
-	test = (String*) malloc(sizeof(String));
 
-	insInit(test);
+	String* test;
+	test = insInit(test);
 
 	test->strInit("aaaaaaaaaassssssssssddddddddddffffffffff", test);
 	test->pri(test);
-	test->freeStr(test);
+	test->strFree(test);
 
 }
