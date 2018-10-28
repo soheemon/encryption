@@ -4,11 +4,17 @@
 typedef struct _string {
 	char* string;
 	int strLength;
+
 	void (*strInit) (const char*, struct _string*);
+	void (*freeStr) (struct _string*);
 	void (*pri) (struct _string*);
 }String;
 
-void _strInit(const char* string, String* this) {
+void _freeStr (String* this) {
+	free(this->string);
+	free(this);
+}
+void _strInit (const char* string, String* this) {
 
 	char* tmpChar = (char*)string;
 	int _strLength = 0;
@@ -41,13 +47,17 @@ void _pri(String* this) {
 void insInit (String* this) {
 	this->strInit = _strInit;
 	this->pri = _pri;
+	this->freeStr = _freeStr;
 }
 
 void main(void) {
 	String* test;
 	test = (String*) malloc(sizeof(String));
+
 	insInit(test);
+
 	test->strInit("aaaaaaaaaassssssssssddddddddddffffffffff", test);
 	test->pri(test);
+	test->freeStr(test);
 
 }
