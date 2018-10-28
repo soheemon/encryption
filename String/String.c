@@ -24,6 +24,14 @@ void _strFree (String* this) {
 	free(this);
 }
 
+bool _equals (String* str1, String* str2) {
+
+	/*
+	/ 추가 필요
+	/
+	*/
+}
+
 bool _startWith (char chr, String* this) {
 
 	if(chr == this->string[0]) {
@@ -85,6 +93,8 @@ String* insInit (String* this) {
 
 	this->startWith = _startWith;
 	this->endWith = _endWith;
+
+	this->equals = _equals;
 
 	return this;
 }
