@@ -1,24 +1,47 @@
 #include "String.h"                                                        
 
-void main(void) {                                                          
+int main(int argc, char* args[]) {                                                          
 
-	String* test;                                                          
-	String* test1;                                                         
+	String* testString1;
+	String* testString2;
 
-	test = insInit(test);                                                  
-	test1 = insInit(test1);                                                
+	testString1	= insInit(testString1);
+	testString2	= insInit(testString2);
 
-	test->strInit("aaaahhhaaaassssssssssddddddddddffffffffff!", test);     
-	test1->strInit("aaaaaaaaaassssssssssddddddddddffffffffff!", test1);    
+	testString1->strInit("hello from the other side", testString1); // String 객체에 문자열 할당
+	testString2->strInit("I must've called a thousand times", testString2);
 
-	printf("%d\n", test->equals(test, test1));                             
-	printf("%d\n", test->getLength(test));                                 
-	char* test3 = (char*) malloc(test->getLength(test));                   
-	test3 = test->toChar(test);                                            
-	printf("%s\n", test3);                                                 
-	printf("%d\n", test1->indexOf(test1, 'h'));                            
-	test->strFree(test);                                                   
-	test1->strFree(test1);                                                 
-	free(test3);                                                           
+	printf("testString1 length :%d\n", testString1->getLength(testString1)); // 문자열 길이 getter
+	printf("testString2 length :%d\n", testString2->getLength(testString2));
+
+	if(testString1->equals(testString1, testString2) == true) { // 문자열 비교 함수
+		printf("testString1 and testString2 are same\n");
+	} else {
+		printf("testString1 and testString2 are not same\n");
+	}
+
+	char* testPtr = (char*) malloc(testString2->getLength(testString2)); //String객체에 저장되어있는 문자열을 Char*로
+
+	if(testPtr == NULL) {
+		return 1;
+	}
+
+	testPtr = testString2->toChar(testString2);
+
+	printf("testPtr : %s\n", testPtr);
+
+	char chr = 'X';
+	int index = testString1->indexOf(testString1, chr); // testString1 객체에서 문자 X가 존재여부/몇번째에 존재하는지 확인.
+
+	if(index < 0) {
+		printf("%c is not in the string\n", chr);
+	}else {
+		printf("%c is at %d in the string\n", chr, index);
+	}
+
+	testString1->strFree(testString1);
+	testString2->strFree(testString2);
+
+	free(testPtr);
 
 }  
