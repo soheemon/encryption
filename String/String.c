@@ -26,10 +26,20 @@ void _strFree (String* this) {
 
 bool _equals (String* str1, String* str2) {
 
-	/*
-	/ 추가 필요
-	/
-	*/
+	if(str1->strLength != str2->strLength) {
+		return false;
+	}
+	
+	int strIndex = 0;
+
+	while(strIndex < str1->strLength) {
+		if(str1->string[strIndex] != str2->string[strIndex]) {
+			return false;
+		}
+		strIndex++;
+	}
+	return true;
+
 }
 
 bool _startWith (char chr, String* this) {
@@ -70,10 +80,9 @@ void _strInit (const char* string, String* this) {
 	tmpChar = (char*)string;
 
 	int idxOfStr = 0;
-	while(*tmpChar != '\0') {
+	while(string[idxOfStr] != '\0') {
 
 		this->string[idxOfStr] = string[idxOfStr];
-		tmpChar++;
 		idxOfStr++;
 	}
 	this->string[idxOfStr] = '\0';
@@ -102,12 +111,17 @@ String* insInit (String* this) {
 void main(void) {
 
 	String* test;
-	test = insInit(test);
+	String* test1;
 
-	test->strInit("aaaaaaaaaassssssssssddddddddddffffffffff!", test);
-	test->pri(test);
-	printf("%d\n", (int)test->startWith('a', test));
-	printf("%d\n", (int)test->endWith('!', test));
+	test = insInit(test);
+	test1 = insInit(test1);
+
+	test->strInit("aaaahhhaaaassssssssssddddddddddffffffffff!", test);
+	test1->strInit("aaaaaaaaaassssssssssddddddddddffffffffff!", test1);
+
+	printf("%d", test->equals(test, test1));
+
 	test->strFree(test);
+	test1->strFree(test1);
 
 }
