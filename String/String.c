@@ -1,31 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "String.h"
 
-typedef enum {
-	true = 0,
-	false = 1
-} bool;
-
-typedef struct _string {
-	char* string;
-	int strLength;
-
-	void (*strInit) (const char*, struct _string*);
-	void (*strFree) (struct _string*);
-	void (*pri) (struct _string*);
-
-	bool (*startWith) (char, struct _string*);
-	bool (*endWith) (char, struct _string*);
-	bool (*equals) (struct _string*, struct _string*);
-
-	char* (*toChar) (struct _string*);
-	int (*getLength) (struct _string*);
-
-	int (*indexOf) (struct _string*, char comChar);
-	int (*lastIndexOf) (struct _string*, char cmpChar);
-
-
-} String;
+static void _strFree (String* this) {
+	free(this->string);
+	free(this);
+}
 
 static int _indexOf (String* this, char comChar) {
 
@@ -50,10 +28,6 @@ static int _lastIndexOf (String* this, char comChr) {
 	*/
 }
 
-void _strFree (String* this) {
-	free(this->string);
-	free(this);
-}
 
 static int _getLength (String* this) {
 	return this->strLength;
@@ -151,27 +125,4 @@ String* insInit (String* this) {
 	this->lastIndexOf = _lastIndexOf;
 
 	return this;
-}
-
-void main(void) {
-
-	String* test;
-	String* test1;
-
-	test = insInit(test);
-	test1 = insInit(test1);
-
-	test->strInit("aaaahhhaaaassssssssssddddddddddffffffffff!", test);
-	test1->strInit("aaaaaaaaaassssssssssddddddddddffffffffff!", test1);
-
-	printf("%d\n", test->equals(test, test1));
-	printf("%d\n", test->getLength(test));
-	char* test3 = (char*) malloc(test->getLength(test));
-	test3 = test->toChar(test);
-	printf("%s\n", test3);
-	printf("%d\n", test1->indexOf(test1, 'h'));
-	test->strFree(test);
-	test1->strFree(test1);
-	free(test3);
-
 }
