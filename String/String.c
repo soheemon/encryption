@@ -21,7 +21,34 @@ typedef struct _string {
 	char* (*toChar) (struct _string*);
 	int (*getLength) (struct _string*);
 
-}String;
+	int (*indexOf) (struct _string*, char comChar);
+	int (*lastIndexOf) (struct _string*, char cmpChar);
+
+
+} String;
+
+static int _indexOf (String* this, char comChar) {
+
+	int idxOfStr = 0;
+
+	while(idxOfStr < this->strLength) {
+
+		if(this->string[idxOfStr] == comChar) {
+			return idxOfStr;
+		}
+
+		idxOfStr++;
+	}
+	return -1;
+}
+
+static int _lastIndexOf (String* this, char comChr) {
+
+	/*
+	 * 구현 필요
+	 *
+	*/
+}
 
 void _strFree (String* this) {
 	free(this->string);
@@ -120,6 +147,9 @@ String* insInit (String* this) {
 	this->toChar = _toChar;
 	this->getLength = _getLength;
 
+	this->indexOf = _indexOf;
+	this->lastIndexOf = _lastIndexOf;
+
 	return this;
 }
 
@@ -139,7 +169,7 @@ void main(void) {
 	char* test3 = (char*) malloc(test->getLength(test));
 	test3 = test->toChar(test);
 	printf("%s\n", test3);
-
+	printf("%d\n", test1->indexOf(test1, 'h'));
 	test->strFree(test);
 	test1->strFree(test1);
 	free(test3);
