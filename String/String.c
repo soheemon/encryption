@@ -17,6 +17,10 @@ typedef struct _string {
 	bool (*startWith) (char, struct _string*);
 	bool (*endWith) (char, struct _string*);
 	bool (*equals) (struct _string*, struct _string*);
+
+	char* (*toChar) (struct _string*);
+	int (*getLength) (struct _string*);
+
 }String;
 
 void _strFree (String* this) {
@@ -24,7 +28,15 @@ void _strFree (String* this) {
 	free(this);
 }
 
-bool _equals (String* str1, String* str2) {
+static int _getLength (String* this) {
+	return this->strLength;
+}
+
+static char* _toChar (String* this) {
+	return this->string;
+}
+
+static bool _equals (String* str1, String* str2) {
 
 	if(str1->strLength != str2->strLength) {
 		return false;
@@ -33,16 +45,17 @@ bool _equals (String* str1, String* str2) {
 	int strIndex = 0;
 
 	while(strIndex < str1->strLength) {
+
 		if(str1->string[strIndex] != str2->string[strIndex]) {
 			return false;
 		}
+
 		strIndex++;
 	}
 	return true;
-
 }
 
-bool _startWith (char chr, String* this) {
+static bool _startWith (char chr, String* this) {
 
 	if(chr == this->string[0]) {
 		return true;
@@ -52,7 +65,7 @@ bool _startWith (char chr, String* this) {
 
 }
 
-bool _endWith (char chr, String* this) {
+static bool _endWith (char chr, String* this) {
 
 	if(chr == this->string[this->strLength-1]) {
 		return true;
@@ -62,7 +75,7 @@ bool _endWith (char chr, String* this) {
 
 }
 
-void _strInit (const char* string, String* this) {
+static void _strInit (const char* string, String* this) {
 
 
 	char* tmpChar = (char*)string;
@@ -88,7 +101,7 @@ void _strInit (const char* string, String* this) {
 	this->string[idxOfStr] = '\0';
 }
 
-void _pri(String* this) {
+static void _pri(String* this) {
 	printf("%s %d\n", this->string, this->strLength);
 }
 
@@ -104,6 +117,8 @@ String* insInit (String* this) {
 	this->endWith = _endWith;
 
 	this->equals = _equals;
+	this->toChar = _toChar;
+	this->getLength = _getLength;
 
 	return this;
 }
@@ -119,9 +134,14 @@ void main(void) {
 	test->strInit("aaaahhhaaaassssssssssddddddddddffffffffff!", test);
 	test1->strInit("aaaaaaaaaassssssssssddddddddddffffffffff!", test1);
 
-	printf("%d", test->equals(test, test1));
+	printf("%d\n", test->equals(test, test1));
+	printf("%d\n", test->getLength(test));
+	char* test3 = (char*) malloc(test->getLength(test));
+	test3 = test->toChar(test);
+	printf("%s\n", test3);
 
 	test->strFree(test);
 	test1->strFree(test1);
+	free(test3);
 
 }
