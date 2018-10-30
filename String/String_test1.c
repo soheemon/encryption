@@ -11,6 +11,9 @@ int main(int argc, char* args[]) {
 	testString1->strInit("hello from the other side", testString1); // String 객체에 문자열 할당
 	testString2->strInit("I must've called a thousand times", testString2);
 
+	testString1->pri(testString1);
+	testString2->pri(testString2);
+
 	printf("testString1 length :%d\n", testString1->getLength(testString1)); // 문자열 길이 getter
 	printf("testString2 length :%d\n", testString2->getLength(testString2));
 
