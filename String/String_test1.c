@@ -20,16 +20,6 @@ int main(int argc, char* args[]) {
 		printf("testString1 and testString2 are not same\n");
 	}
 
-	char* testPtr = (char*) malloc(testString2->getLength(testString2)); //String객체에 저장되어있는 문자열을 Char*로
-
-	if(testPtr == NULL) {
-		return 1;
-	}
-
-	testPtr = testString2->toChar(testString2);
-
-	printf("testPtr : %s\n", testPtr);
-
 	char chr = 'X';
 	int index = testString1->indexOf(testString1, chr); // testString1 객체에서 문자 X가 존재여부/몇번째에 존재하는지 확인.
 
@@ -41,7 +31,5 @@ int main(int argc, char* args[]) {
 
 	testString1->strFree(testString1);
 	testString2->strFree(testString2);
-
-	free(testPtr);
 
 }  

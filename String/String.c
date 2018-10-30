@@ -1,9 +1,5 @@
 #include "String.h"
 
-static void _strFree (String* this) {
-	free(this->string);
-	free(this);
-}
 
 static int _indexOf (String* this, char comChar) {
 
@@ -31,10 +27,6 @@ static int _lastIndexOf (String* this, char comChr) {
 
 static int _getLength (String* this) {
 	return this->strLength;
-}
-
-static char* _toChar (String* this) {
-	return this->string;
 }
 
 static bool _equals (String* str1, String* str2) {
@@ -106,19 +98,23 @@ static void _pri(String* this) {
 	printf("%s %d\n", this->string, this->strLength);
 }
 
+void _strFree(String* this) {
+	free(this->string);
+	free(this);
+}
+
 String* insInit (String* this) {
 
 	this = (String*) malloc(sizeof(String));
 
 	this->strInit = _strInit;
-	this->pri = _pri;
 	this->strFree = _strFree;
+	this->pri = _pri;
 
 	this->startWith = _startWith;
 	this->endWith = _endWith;
 
 	this->equals = _equals;
-	this->toChar = _toChar;
 	this->getLength = _getLength;
 
 	this->indexOf = _indexOf;
@@ -126,3 +122,4 @@ String* insInit (String* this) {
 
 	return this;
 }
+

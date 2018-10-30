@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifndef __DES_H__
-#define __DES_H__
+#ifndef __STRING_H__
+#define __STRING_H__
 
 typedef enum {
 	true = 0,
@@ -21,12 +21,10 @@ typedef struct _string {
 	bool (*endWith) (char, struct _string*);
 	bool (*equals) (struct _string*, struct _string*);
 
-	char* (*toChar) (struct _string*);
 	int (*getLength) (struct _string*);
 
 	int (*indexOf) (struct _string*, char comChar);
 	int (*lastIndexOf) (struct _string*, char cmpChar);
-
 
 } String;
 
