@@ -18,10 +18,17 @@ static int _indexOf (String* this, char comChar) {
 
 static int _lastIndexOf (String* this, char comChr) {
 
-	/*
-	 * 구현 필요
-	 *
-	*/
+	int idxOfStr = this->strLength - 1;
+
+	while(idxOfStr > 0) {
+
+		if(this->string[idxOfStr] == comChar) {
+			return idxOfStr;
+		}
+
+		idxOfStr--;
+	}
+	return -1;
 }
 
 
@@ -95,7 +102,7 @@ static void _strInit (const char* string, String* this) {
 }
 
 static void _pri(String* this) {
-	printf("%s %d\n", this->string, this->strLength);
+	printf("%s\n", this->string);
 }
 
 void _strFree(String* this) {
