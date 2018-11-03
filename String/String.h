@@ -26,6 +26,7 @@ typedef struct _string {
 	int (*indexOf) (struct _string*, char comChar);
 	int (*lastIndexOf) (struct _string*, char cmpChar);
 
+	void (*replace) (struct _string*, char srcChar, char repChar);
 } String;
 
 String* insInit(String* this);

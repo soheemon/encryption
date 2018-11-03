@@ -1,5 +1,13 @@
 #include "String.h"
 
+static void _replace (String* this, char srcChar, char repChar) {
+
+	for(int idxOfStr = 0; idxOfStr < this->strLength - 1; idxOfStr++){
+		if (this->string[idxOfStr] == srcChar) {
+			this->string[idxOfStr] = repChar;
+		}
+	}
+}
 
 static int _indexOf (String* this, char comChar) {
 
@@ -22,7 +30,7 @@ static int _lastIndexOf (String* this, char comChr) {
 
 	while(idxOfStr > 0) {
 
-		if(this->string[idxOfStr] == comChar) {
+		if(this->string[idxOfStr] == comChr) {
 			return idxOfStr;
 		}
 
@@ -126,6 +134,7 @@ String* insInit (String* this) {
 
 	this->indexOf = _indexOf;
 	this->lastIndexOf = _lastIndexOf;
+	this->replace = _replace;
 
 	return this;
 }

@@ -32,6 +32,12 @@ int main(int argc, char* args[]) {
 		printf("%c is at %d in the string\n", chr, index);
 	}
 
+	char srcChar = 'e',
+		 repChar = 'g';
+
+	testString1->replace(testString1, srcChar, repChar); // testString1 객체에서 문자 e를 찾아서 g로 바꾼다.
+	testString1->pri(testString1);
+
 	testString1->strFree(testString1);
 	testString2->strFree(testString2);
 
