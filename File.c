@@ -31,34 +31,39 @@ void _readOneLine(char* dst, file* this) {
 
 void _writeOneLine(char* dst, file* this) {
 	if (fputs(dst, this->fileStream) < 0) {
-		printf("NULL!!");
+		return;
 	}
 }
 void ckOneLine(char* oneLine) {
 	int commentIsReal = 0;
 	int commentRange = 0;
+
 	for(; oneLine[commentRange] != '\n'; commentRange++) {
 		if((oneLine[commentRange] == '/') && (oneLine[commentRange + 1] == '/')){//주석을 만나면 빠져나감. 
 			commentIsReal = 1;
 				break;
 		}	
 	}
+
 	if(commentIsReal == 1) {
-	for(; oneLine[commentRange] != '\n'; commentRange++) {
+		for(; oneLine[commentRange] != '\n'; commentRange++) {
 		oneLine[commentRange] = ' ';//oneLine이 /라고 생각해서 \0전까지 전부 공백을 넣는다.
+		}
 	}
-}
 }//한개의 문장이 끝났음.
 
 void _removeComment(file* src, file* dst) {
 	char buffer[BUFFER_SIZE];
-	while(!feof(src->fileStream)) {
+
+	do {
 		src->readOneLine(buffer, src);
 		ckOneLine(buffer);
 		dst->writeOneLine(buffer, dst);
 		printf("%s", buffer);
-	}
+
+	}while(!feof(src->fileStream));
 }
+
 file* fileInit(file* this) { //void로 하면 segfault가 발생하는데 이유를 모르겠음.
 	this = (file*)malloc(sizeof(file));
 	this->fileOpen = _fileOpen;
@@ -74,7 +79,7 @@ void main(void) {
 	test1->fileOpen("toto.c", test1, "r");
 
 	file* test2 = fileInit(test2);
-	test2->fileOpen("nocommentver.c", test2, "a");
+	test2->fileOpen("nocommentver.c", test2, "w");
 
 	test1->removeComment(test1, test2);
 }
